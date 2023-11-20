@@ -1,0 +1,27 @@
+---
+compiled_package_info:
+  package_name: wepets
+  address_alias_instantiation:
+    std: "0000000000000000000000000000000000000000000000000000000000000001"
+    sui: "0000000000000000000000000000000000000000000000000000000000000002"
+    wepets: "0000000000000000000000000000000000000000000000000000000000000000"
+  source_digest: CF1A99FD3A87EBF488421D6A4D80F527693E5E8CA6DF34B053279E701A25445E
+  build_flags:
+    dev_mode: true
+    test_mode: true
+    generate_docs: false
+    generate_abis: false
+    install_dir: ~
+    force_recompilation: false
+    lock_file: ~
+    additional_named_addresses: {}
+    fetch_deps_only: false
+    skip_fetch_latest_git_deps: false
+    default_flavor: ~
+    default_edition: ~
+    deps_as_root: false
+    silence_warnings: false
+    warnings_are_errors: false
+dependencies:
+  - MoveStdlib
+  - Sui

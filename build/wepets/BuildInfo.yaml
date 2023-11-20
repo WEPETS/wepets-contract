@@ -5,19 +5,19 @@ compiled_package_info:
     std: "0000000000000000000000000000000000000000000000000000000000000001"
     sui: "0000000000000000000000000000000000000000000000000000000000000002"
     wepets: "0000000000000000000000000000000000000000000000000000000000000000"
-  source_digest: A799A9C9A6A07FE69BCB7DA1F5A32202749EA432EC9C691474715E799B3E1FC0
+  source_digest: 09F30DDEA12E74C2F1E7B104991678F7110578FE88CF3C97B15587D0077887A7
   build_flags:
-    dev_mode: true
-    test_mode: true
+    dev_mode: false
+    test_mode: false
     generate_docs: false
     generate_abis: false
     install_dir: ~
     force_recompilation: false
-    lock_file: ~
+    lock_file: "./Move.lock"
     additional_named_addresses: {}
     fetch_deps_only: false
     skip_fetch_latest_git_deps: false
-    default_flavor: ~
+    default_flavor: sui
     default_edition: ~
     deps_as_root: false
     silence_warnings: false

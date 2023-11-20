@@ -51,14 +51,14 @@ module wepets::we_pet_game {
         slayer_address: address,
         hero: ID,
         pet: ID,
-        monster: ID,
         game_id: ID,
     }
 
 
     // TODO: ERROR
     const NOT_PET: u64 = 0;
-
+    const PET_WIN:u64 = 0;
+    const PET_lose:u64 = 2;
 
     #[allow(unused_function)]
     fun init(ctx: &mut TxContext) {
@@ -92,15 +92,14 @@ module wepets::we_pet_game {
     // create profile
     // TODO
     public entry fun create_profile(
-        game: &GameInfo, admin: &mut GameAdmin, player: address, ctx: &mut TxContext
+        game: &GameInfo, admin: &GameAdmin, player: address, ctx: &mut TxContext
     ) {
 
         // create a hero
         let new_hero = create_hero(game, ctx);
         let hero_ref = &new_hero;
         // create a pet
-        let new_pet = create_pet(game, hero_ref, 100, 20, ctx);
-        admin.bot_animal_created = admin.bot_animal_created + 1;
+        let new_pet = create_pet(game, hero_ref, 100, 30, ctx);
         transfer::public_transfer(new_hero, player);
         transfer::public_transfer(new_pet, player);
     }
@@ -120,20 +119,47 @@ module wepets::we_pet_game {
     // USER
     // attrack
     // TODO
-    public entry fun attack(game: &GameInfo, hero: &mut Hero, pet: &mut Pet, bot: Bot, ctx: &TxContext) {
-        let Bot {id: b_id, hp: b_hp, strength: bot_strength, game_id: _} = bot;
+    public entry fun huntbot(game: &GameInfo, hero: &mut Hero, pet: &mut Pet, bot: Bot, ctx: &TxContext) {
+        let Bot {id: b_id, hp, strength: bot_strength, game_id: _} = bot;
 
         // check pet la cua hero 
         assert!(id(hero) ==  pet.owner, NOT_PET);
 
-
+    
         // pet vs bot   
+        let bot_hp = hp;   
+        let pet_hp = pet.hp;
+        let pet_strength = pet.strength * 2;
+
+        while (bot_hp > pet.strength) {
+            // hero attack boar
+            bot_hp = bot_hp - pet.strength;
+            assert!(bot_hp >= bot_strength , 1);
+            bot_hp = bot_hp - bot_strength;
+
+        };
+
+
+
+     
+        hero.level = hero.level + pet_hp;
+        pet.exp = pet.exp + pet.strength * 10/100;
+        
+        pet.hp = pet_hp;
+
+        event::emit(Bot_animalEvent {
+            slayer_address: tx_context::sender(ctx),
+            hero: object::uid_to_inner(&hero.id),
+            pet: object::uid_to_inner(&pet.id),
+            game_id: object::id(game)
+        });
+
+    
+        // level up pet & hero
+        
 
         // delete bot
         object::delete(b_id);
-
-        // level up pet & hero
-        
 
     }
 
@@ -166,13 +192,7 @@ module wepets::we_pet_game {
 
     }
 
-    public fun level_up_hero(hero: &Hero, amount: u64): u64 {
-        hero.level + amount
-    }
-
-    public fun level_up_pet(pet: &mut Pet, amount: u64): u64{
-        pet.exp + amount
-    }
+ 
 
     public fun game_id(game: &GameInfo): ID {
         object::id(game)
@@ -211,22 +231,21 @@ module wepets::we_pet_game {
 
             // check sender have to admin object 
             let admin = test_scenario::take_from_sender<GameAdmin>(scenario);
-            create_profile(game_ref, &mut admin, player ,test_scenario::ctx(scenario));
+            create_profile(game_ref, &admin, player ,test_scenario::ctx(scenario));
             test_scenario::return_immutable(game);
             test_scenario::return_to_sender(scenario, admin)
             
         };
 
 
-
-        // -> Create bot -> send bot 
+        // -> Create bot ->  Admin send bot to player 
         test_scenario::next_tx(scenario, admin);
         {
             let game: GameInfo = test_scenario::take_immutable<GameInfo>(scenario);
             let game_ref: &GameInfo = &game;
 
             let admin = test_scenario::take_from_sender<GameAdmin>(scenario);
-            send_bot(game_ref, &mut admin, player,100, 10,test_scenario::ctx(scenario));
+            send_bot(game_ref, &mut admin, player,50, 10,test_scenario::ctx(scenario));
 
             test_scenario::return_immutable(game);
             test_scenario::return_to_sender(scenario, admin);
@@ -237,13 +256,15 @@ module wepets::we_pet_game {
         {
             let game: GameInfo = test_scenario::take_immutable<GameInfo>(scenario);
             let hero: Hero = test_scenario::take_from_sender<Hero>(scenario);
-        
+            let pet: Pet = test_scenario::take_from_sender<Pet>(scenario);
             // drop bot
-            //let bot: Bot = test_scenario::take_from_sender<Bot>(scenario);
+            let bot: Bot = test_scenario::take_from_sender<Bot>(scenario);
 
-            
+            huntbot(&game, &mut hero, &mut pet, bot, test_scenario::ctx(scenario));
+
             test_scenario::return_immutable(game);
             test_scenario::return_to_sender(scenario, hero);
+            test_scenario::return_to_sender(scenario, pet)
         };
             
         test_scenario::end(sceneraio_val);

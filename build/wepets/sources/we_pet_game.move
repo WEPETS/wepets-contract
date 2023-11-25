@@ -11,27 +11,25 @@ module wepets::we_pet_game {
     use std::option::{Self, Option};
 
     // TODO: EVENT
-    
-
     struct Hero has key, store {
         id: UID,
-        level: u64,
+        level: u8,
         game_id: ID,
     }
 
     struct Pet has key, store {
         id: UID,
-        hp: u64,
-        exp: u64,
-        strength: u64,
+        hp: u8,
+        exp: u8,
+        strength: u8,
         game_id: ID,
         owner: ID // pet of owner
     }
 
     struct Bot has key, store {
         id: UID,
-        hp: u64,
-        strength: u64,
+        hp: u8,
+        strength: u8,
         game_id: ID,
     }
 
@@ -43,7 +41,7 @@ module wepets::we_pet_game {
     // TODO: refactor
     struct GameAdmin has key {
         id: UID,
-        bot_animal_created: u64,
+        bot_animal_created: u8,
         game_id: ID,
     }
 
@@ -107,7 +105,7 @@ module wepets::we_pet_game {
     // create bot (send bot to player)
     // TODO;  
     public entry fun send_bot(
-        game: &GameInfo, admin: &mut GameAdmin, player: address, hp: u64,strength: u64 , ctx: &mut TxContext
+        game: &GameInfo, admin: &mut GameAdmin, player: address, hp: u8,strength: u8 , ctx: &mut TxContext
     ) {
         // create a pet
         let new_bot = create_bot(game, hp, strength, ctx);
@@ -171,7 +169,7 @@ module wepets::we_pet_game {
         }
     }
 
-    public fun create_pet(game: &GameInfo,hero: &Hero, hp: u64, strength: u64, ctx: &mut TxContext): Pet {
+    public fun create_pet(game: &GameInfo,hero: &Hero, hp: u8, strength: u8, ctx: &mut TxContext): Pet {
         Pet {
             id: object::new(ctx),
             hp, 
@@ -182,7 +180,7 @@ module wepets::we_pet_game {
         }
     }
 
-    public fun create_bot(game: &GameInfo, hp: u64, strength: u64, ctx: &mut TxContext): Bot {
+    public fun create_bot(game: &GameInfo, hp: u8, strength: u8, ctx: &mut TxContext): Bot {
         Bot {
             id: object::new(ctx),
             hp, 

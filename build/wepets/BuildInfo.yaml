@@ -5,7 +5,7 @@ compiled_package_info:
     std: "0000000000000000000000000000000000000000000000000000000000000001"
     sui: "0000000000000000000000000000000000000000000000000000000000000002"
     wepets: "0000000000000000000000000000000000000000000000000000000000000000"
-  source_digest: 09F30DDEA12E74C2F1E7B104991678F7110578FE88CF3C97B15587D0077887A7
+  source_digest: 117A0CDEE600898B61783537696076189DF8E77C3B09C1226C5DEA39E2C6B990
   build_flags:
     dev_mode: false
     test_mode: false
@@ -20,8 +20,6 @@ compiled_package_info:
     default_flavor: sui
     default_edition: ~
     deps_as_root: false
-    silence_warnings: false
-    warnings_are_errors: false
 dependencies:
   - MoveStdlib
   - Sui
